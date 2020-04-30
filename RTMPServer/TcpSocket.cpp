@@ -2,6 +2,7 @@
  * Copyright (C) 2020 BrianYi, All rights reserved
  */
 #include "TcpSocket.h"
+#include "ServerHeader.h"
 
 TcpSocket::TcpSocket( ) :
 	EventHandler( SOCK_STREAM, IPPROTO_TCP, Blocking )

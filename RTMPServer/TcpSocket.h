@@ -3,6 +3,8 @@
  */
 #pragma once
 #include "EventHandler.h"
+#include "Address.h"
+
 class TcpSocket: public EventHandler
 { 
 public:

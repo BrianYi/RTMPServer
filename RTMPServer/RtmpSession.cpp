@@ -272,7 +272,7 @@ int32_t RtmpSession::handle_event( uint32_t flags )
 		TaskThreadPool::sReaderNum--;
 #endif // _DEBUG
 	}
-	if ( fEvents & EPOLLOUT )
+	if ( flags & EPOLLOUT )
 	{
 		// lock writing
 		std::unique_lock<std::mutex> lockWrite( fWriteMx );
@@ -337,28 +337,6 @@ void RtmpSession::disconnect( )
 					   this->fApp.c_str(), this->ip().c_str(),
 					   this->port(),
 					   RtmpSessionTable::session_count() );
-// 	if ( this->fType == typePusher )
-// 	{
-// 		RTMP_LogAndPrintf( RTMP_LOGDEBUG, "pusher for app[%s] from %s:%d has lost, left %d pusher",
-// 						   this->fApp.c_str(), this->ip().c_str(),
-// 						   this->port(),
-// 						   RtmpSessionTable::pusher_count() );
-// 	}
-// 	else if ( this->fType == typePuller )
-// 	{
-// 		RTMP_LogAndPrintf( RTMP_LOGDEBUG, "puller for app[%s] from %s:%d has lost, left %d puller for app[%s], left total %d puller",
-// 						   this->fApp.c_str(), this->ip().c_str(),
-// 						   this->port(),
-// 						   RtmpSessionTable::puller_count( fApp ),
-// 						   this->fApp.c_str(),
-// 						   RtmpSessionTable::puller_count() );
-// 	}
-// 	else
-// 	{
-// 		RTMP_LogAndPrintf( RTMP_LOGDEBUG, "anonymous for app[%s] from %s:%d has lost",
-// 						   this->fApp.c_str(), this->ip().c_str(),
-// 						   this->port() );
-// 	}
 
 	// kill event
 	this->kill_event( );

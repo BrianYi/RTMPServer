@@ -2,7 +2,19 @@
  * Copyright (C) 2020 BrianYi, All rights reserved
  */
 #pragma once
-#include "ServerHeader.h"
+#include "PlatformHeader.h"
+
+#if _WIN32
+#define NOMINMAX
+#include <WinSock2.h>
+#else
+#endif
+
+#if __linux__
+#define ntohll		be64toh
+#define htonll		htobe64
+#define msleep(ms)	usleep(1000 * ms)
+#endif
 
 #define MAX_BODY_SIZE 1400
 #define MAX_PACKET_SIZE (MAX_BODY_SIZE+sizeof (HEADER))
@@ -18,7 +30,26 @@
 #define INVALID_SIZE(header)	(PACK_SIZE_H(header)>MAX_PACKET_SIZE || PACK_SIZE_H(header)<sizeof HEADER)
 #define INVALID_PACK(header)	(INVALID_TYPE(header)||INVALID_SEQ(header)||INVALID_SIZE(header))
 
- // 4+4+4+8+8+16=44
+
+enum RtmpType
+{
+	CreateStream,
+	//	Play,
+	Push,
+	Pull,
+	Ack,
+	Fin,
+	Err,
+	OnlineSessions,
+	NewSession,
+	LostSession,
+	BuildConnect,
+	Accept,
+	Refuse,
+	TypeNum
+};
+
+// 4+4+4+8+8+16=44
 #pragma pack(1)
 struct HEADER
 {
@@ -34,14 +65,14 @@ struct HEADER
 	int32_t MP;				// more packet?
 	uint32_t seq;			// sequence number
 	uint64_t timestamp;		// send time
-	char app[ 64 ];		// app
+	char app[64];		// app
 };
 #pragma pack()
 
 struct PACKET
 {
 	HEADER header;
-	char body[ MAX_BODY_SIZE ];
+	char body[MAX_BODY_SIZE];
 };
 
 // raw packet: PACKET
@@ -51,13 +82,13 @@ class Packet
 {
 public:
 	Packet( const uint32_t& size,
-			const int32_t& type,
-			const int32_t& reserved,
-			const int32_t& MP,
-			const uint32_t& seq,
-			const uint64_t& timestamp,
-			const std::string& app,
-			const char *body );
+		const int32_t& type,
+		const int32_t& reserved,
+		const int32_t& MP,
+		const uint32_t& seq,
+		const uint64_t& timestamp,
+		const std::string& app,
+		const char *body );
 	Packet( char *rawNetPacket );
 	Packet( PACKET *rawPacket ) { memcpy( &fRawPacket, rawPacket, MAX_PACKET_SIZE ); }
 	~Packet();
@@ -84,7 +115,8 @@ class PacketUtils
 public:
 	static Packet* new_packet( const Packet& packet )
 	{
-		return new Packet( packet.size(), packet.type(), packet.reserved(), packet.MP(), packet.seq(), packet.timestamp(), packet.app(), packet.body() );
+		Packet *p = new Packet( packet.size(), packet.type(), packet.reserved(), packet.MP(), packet.seq(), packet.timestamp(), packet.app(), packet.body() );
+		return p;
 	}
 	static Packet ack_packet( const std::string& app )
 	{
@@ -109,6 +141,14 @@ public:
 	static Packet* new_accept_packet( const uint32_t& size, const std::string& app, const int32_t& timebase, const char* body )
 	{
 		return new Packet( size, Accept, timebase, 0, 0, get_timestamp_ms(), app, body );
+	}
+	static Packet refuse_packet( const uint32_t& size, const std::string& app, const int32_t& timebase, const char* body )
+	{
+		return Packet( size, Refuse, timebase, 0, 0, get_timestamp_ms(), app, body );
+	}
+	static Packet* new_refuse_packet( const uint32_t& size, const std::string& app, const int32_t& timebase, const char* body )
+	{
+		return new Packet( size, Refuse, timebase, 0, 0, get_timestamp_ms(), app, body );
 	}
 	static Packet err_packet( const std::string& app )
 	{
@@ -179,7 +219,7 @@ public:
 inline PACKET* Packet::alloc_raw_packet()
 {
 	uint32_t packetSize = PACK_SIZE_H( fRawPacket.header );
-	PACKET *rawPacket = ( PACKET * ) malloc( packetSize );
+	PACKET *rawPacket = (PACKET *)malloc( packetSize );
 	memcpy( rawPacket, &fRawPacket, packetSize );
 	return rawPacket;
 }

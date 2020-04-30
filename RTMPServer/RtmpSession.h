@@ -4,7 +4,6 @@
 #pragma once
 #include "TcpSocket.h"
 #include "Packet.h"
-#include <queue>
 
 class cmp
 {

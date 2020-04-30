@@ -2,9 +2,8 @@
  * Copyright (C) 2020 BrianYi, All rights reserved
  */
 #pragma once
-#include "common.h"
+#include "PlatformHeader.h"
 #include "Log.h"
-#include <assert.h>
 
 // packet info
 #define KEEP_TRACK_PACKET			1
@@ -20,7 +19,7 @@
 
 
 #if KEEP_TRACK_PACKET
-#define KEEP_TRACK_PACKET_SND	0
+#define KEEP_TRACK_PACKET_SND	1
 #define KEEP_TRACK_PACKET_RCV	1
 #endif
 
@@ -34,22 +33,3 @@ const uint32_t SEND_BUF_SIZE = 10 * 1024u;
 
 #define SERVER_IP	"0.0.0.0"
 #define SERVER_PORT_TCP	5566
-
-
-enum RtmpType
-{
-	CreateStream,
-//	Play,
-	Push,
-	Pull,
-	Ack,
-	Fin,
-	Err,
-	OnlineSessions,
-	NewSession,
-	LostSession,
-	BuildConnect,
-	Accept,
-	Refuse,
-	TypeNum
-};

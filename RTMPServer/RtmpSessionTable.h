@@ -3,8 +3,7 @@
  */
 #pragma once
 #include "RtmpSession.h"
-#include <unordered_map>
-#include <algorithm>
+#include "ServerHeader.h"
 
 class RtmpSessionTable
 { 

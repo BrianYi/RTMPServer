@@ -2,9 +2,11 @@
  * Copyright (C) 2020 BrianYi, All rights reserved
  */
 #include <cstdio>
+#include "ServerHeader.h"
 #include "Dispatcher.h"
 #include "TaskThread.h"
 #include "RtmpListenerSocket.h"
+#include "Log.h"
 
 
 int main( int argc, char* argv[ ] )
@@ -62,7 +64,7 @@ int main( int argc, char* argv[ ] )
 
 	for ( ;; )
 	{
-		sleep( 1000 );
+		sleep( 1 );
 	}
 
 	delete rtmpListenerSocket;

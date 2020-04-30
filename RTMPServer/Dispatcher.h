@@ -2,13 +2,11 @@
  * Copyright (C) 2020 BrianYi, All rights reserved
  */
 #pragma once
+#include "PlatformHeader.h"
 #include "Thread.h"
 #include "EventHandler.h"
 #include "TaskThread.h"
 #include "Task.h"
-#include <sys/epoll.h>
-#include <unordered_map>
-#include <mutex>
 class Dispatcher :
 	public Thread
 { 

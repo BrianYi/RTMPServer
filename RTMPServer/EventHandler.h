@@ -2,10 +2,8 @@
  * Copyright (C) 2020 BrianYi, All rights reserved
  */
 #pragma once
-#include "ServerHeader.h"
+#include "PlatformHeader.h"
 #include "Socket.h"
-#include <mutex>
-#include <atomic>
 
 class EventHandler: public Socket
 { 
